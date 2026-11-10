@@ -9388,6 +9388,12 @@ const actions = {
 		},
 	},
 
+	gear_p: gearKey("P", (g) => g.startsWith("P")),
+	gear_r: gearKey("R", (g) => g.startsWith("R")),
+	gear_n: gearKey("N", (g) => g.startsWith("N")),
+	// manual gearboxes report numbers, sport/manual modes of automatics S1, M1, ...
+	gear_d: gearKey("D", (g) => /^[DSM1-9]/.test(g)),
+
 	info: {
 		view(s, t, _phase, settings) {
 			const mph = settings.unit === "mph";
@@ -9402,6 +9408,17 @@ const actions = {
 		},
 	},
 };
+
+/** One key per gear position; the engaged one lights up green. */
+function gearKey(letter, isActive) {
+	return {
+		down: (bridge) => bridge.send(`gear_${letter.toLowerCase()}`, "set"),
+		view(s, t) {
+			const active = isActive(String(s.gear ?? ""));
+			return { letter, color: active ? C.green : undefined, label: t.gear, status: active ? t.on : t.off };
+		},
+	};
+}
 
 const texts = {
 	de: {
@@ -9481,6 +9498,7 @@ function describe(id, bridge, { lang = "de", phase = 0, settings = {} } = {}) {
 		return {
 			icon: idle.icon,
 			neon: idle.neon,
+			letter: idle.letter,
 			big: idle.big ? "–" : undefined,
 			unit: idle.unit,
 			label: idle.quiet ? t.gear + " –" : idle.label,
@@ -9739,7 +9757,9 @@ function renderKey(d) {
 	const statusColor = d.unavailable === "offline" ? "#ff5a4f" : d.unavailable ? "#f2a100" : active ? "#ffffff" : "#8a919d";
 
 	let body = "";
-	if (d.big !== undefined) {
+	if (d.letter) {
+		body += `<text x="72" y="104" font-size="78" fill="${iconColor}" ${FONT}>${esc(d.letter)}</text>`;
+	} else if (d.big !== undefined) {
 		body +=
 			`<text x="72" y="72" font-size="${fitText(d.big, 58, 120)}" fill="${d.unavailable ? "#4d525c" : "#ffffff"}" ${FONT}>${esc(d.big)}</text>` +
 			`<text x="72" y="94" font-size="17" fill="${active ? shade(base, 1.5) : "#8a919d"}" ${FONT}>${esc(d.unit ?? "")}</text>`;

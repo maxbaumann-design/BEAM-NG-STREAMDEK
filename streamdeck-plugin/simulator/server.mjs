@@ -9,9 +9,9 @@ import { FakeGame } from "./game.mjs";
 const HTTP_PORT = Number(process.env.PORT ?? 8377);
 const GAME_PORT = Number(process.env.GAME_PORT ?? 44550);
 const LAYOUT = [
-	"power", "lightbar", "siren", "emergency", "horn",
-	"lights", "highbeam", "fog", "parkingbrake", "info",
-	"signal-l", "hazard", "signal-r",
+	"power", "lightbar", "siren", "horn", "info",
+	"gear-p", "gear-r", "gear-n", "gear-d", "parkingbrake",
+	"lights", "fog", "signal-l", "hazard", "signal-r",
 ];
 
 const game = new FakeGame({ port: GAME_PORT });
@@ -36,8 +36,9 @@ const gameActions = {
 	lightbar: () => game.runInVehicle("electrics.toggle_lightbar_signal()"),
 	hazard: () => game.runInVehicle("electrics.toggle_warn_signal()"),
 	lights: () => game.runInVehicle("electrics.toggle_lights()"),
-	drive: () => game.runInVehicle("mockSet('gear', 'D') mockSet('targetSpeed', 23.9) mockSet('parkingbrake', 0)"),
-	park: () => game.runInVehicle("mockSet('gear', 'P') mockSet('targetSpeed', 0) mockSet('parkingbrake', 1)"),
+	reverse: () => game.runInVehicle("controller.mainController.shiftToGearIndex(-1)"),
+	drive: () => game.runInVehicle("mockSet('targetSpeed', 23.9) mockSet('parkingbrake', 0)"),
+	park: () => game.runInVehicle("mockSet('targetSpeed', 0)"),
 };
 
 const server = http.createServer(async (req, res) => {

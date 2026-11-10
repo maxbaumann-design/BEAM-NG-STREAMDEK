@@ -145,7 +145,9 @@ export function renderKey(d) {
 	const statusColor = d.unavailable === "offline" ? "#ff5a4f" : d.unavailable ? "#f2a100" : active ? "#ffffff" : "#8a919d";
 
 	let body = "";
-	if (d.big !== undefined) {
+	if (d.letter) {
+		body += `<text x="72" y="104" font-size="78" fill="${iconColor}" ${FONT}>${esc(d.letter)}</text>`;
+	} else if (d.big !== undefined) {
 		body +=
 			`<text x="72" y="72" font-size="${fitText(d.big, 58, 120)}" fill="${d.unavailable ? "#4d525c" : "#ffffff"}" ${FONT}>${esc(d.big)}</text>` +
 			`<text x="72" y="94" font-size="17" fill="${active ? shade(base, 1.5) : "#8a919d"}" ${FONT}>${esc(d.unit ?? "")}</text>`;

@@ -20,6 +20,10 @@ const names = {
 	signal_l: ["Blinker links", "Schaltet den linken Blinker ein oder aus."],
 	signal_r: ["Blinker rechts", "Schaltet den rechten Blinker ein oder aus."],
 	parkingbrake: ["Handbremse", "Zieht oder löst die Handbremse."],
+	gear_p: ["Gang P (Parken)", "Legt die Parkstellung ein. Leuchtet grün, wenn P eingelegt ist."],
+	gear_r: ["Gang R (Rückwärts)", "Legt den Rückwärtsgang ein. Leuchtet grün, wenn R eingelegt ist."],
+	gear_n: ["Gang N (Leerlauf)", "Legt den Leerlauf ein. Leuchtet grün, wenn N eingelegt ist."],
+	gear_d: ["Gang D (Fahren)", "Legt die Fahrstufe ein. Leuchtet grün, wenn D eingelegt ist."],
 	info: ["Tempo & Gang", "Zeigt Geschwindigkeit und eingelegten Gang."],
 };
 
@@ -32,7 +36,7 @@ function listIcon(id) {
 	if (svg.includes("<desc>")) return svg.replace('width="144" height="144"', 'width="40" height="40"').replace(/<rect width="144" height="144" fill="[^"]+"\/>/, "").replaceAll("#22e6ff", "#ffffff");
 	const body = svg.includes("<g transform")
 		? svg.slice(svg.indexOf("<g transform"), svg.lastIndexOf("</g>") + 4).replace(/translate\(72,\d+\) scale\([\d.]+\)/, "translate(72,72) scale(1.75)")
-		: `<text x="72" y="96" font-size="64" fill="#fff" font-family="Arial" font-weight="bold" text-anchor="middle">km/h</text>`;
+		: `<text x="72" y="${id.startsWith("gear_") ? 118 : 96}" font-size="${id.startsWith("gear_") ? 130 : 64}" fill="#fff" font-family="Arial" font-weight="bold" text-anchor="middle">${id.startsWith("gear_") ? id.at(-1).toUpperCase() : "km/h"}</text>`;
 	return `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 144 144">${body.replaceAll("#8a919d", "#ffffff")}</svg>`;
 }
 

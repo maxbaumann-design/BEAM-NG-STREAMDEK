@@ -5,7 +5,7 @@ local state = {
   lightbar = 0, lights = 0, fog = false, hazard = false,
   left = false, right = false, horn = false, parkingbrake = 1,
   blink = 0, pulse = false, speed = 0, targetSpeed = 0, gear = 'P',
-  hasEngine = true,
+  hasEngine = true, manual = false,
 }
 
 electrics = { values = {} }
@@ -35,6 +35,15 @@ controller = { mainController = {} }
 function controller.mainController.setStarter(on)
   state.starter = on
   if on then state.crank = 0 end
+end
+
+local shifterSlots = { [-1] = 'R', [0] = 'N', 'P', 'D' }
+function controller.mainController.shiftToGearIndex(index)
+  if state.manual then
+    if index >= -1 and index <= 6 then state.gear = index == -1 and 'R' or index == 0 and 'N' or index end
+  elseif shifterSlots[index] then
+    state.gear = shifterSlots[index]
+  end
 end
 
 powertrain = {}
@@ -73,7 +82,8 @@ function mockUpdate(dt)
     state.blink = state.blink + dt
     if state.blink > 0.35 then state.blink = 0 state.pulse = not state.pulse end
   end
-  local target = state.running and state.targetSpeed or 0
+  local moving = state.running and (state.gear == 'D' or type(state.gear) == 'number')
+  local target = moving and state.targetSpeed or 0
   state.speed = state.speed + (target - state.speed) * math.min(1, dt * 1.5)
   if state.speed < 0.05 then state.speed = 0 end
 

@@ -36,17 +36,22 @@ Das Projekt besteht aus zwei Teilen, die per UDP (Standard `127.0.0.1:4455`) mit
 | Fernlicht, Nebel | an/aus | AN · AUS |
 | Blinker L/R, Warnblinker | an/aus | blinkt im Takt des Fahrzeugs |
 | Handbremse | ziehen/lösen | FEST · GELÖST |
+| Gang P, R, N, D | legt die jeweilige Fahrstufe ein | der eingelegte Gang leuchtet grün |
 | Tempo & Gang | – | km/h oder mph, eingelegter Gang |
 
 Die Tasten hängen voneinander ab: Sirene einschalten macht auch die Blaulicht-Taste grün,
 Blaulicht ausschalten schaltet die Sirene mit ab, Fernlicht ändert die Licht-Taste usw.
+Die Gang-Tasten sind für Automatikgetriebe gedacht. Bei Schaltgetrieben legt **D** den 1. Gang ein und **P**
+den Leerlauf plus Handbremse. Im Getriebemodus „Arcade" schaltet BeamNG selbst zwischen R, N und D –
+für die Gang-Tasten empfiehlt sich der Modus „Realistisch".
+
 Ohne Spiel zeigen alle Tasten `OFFLINE`, ohne Fahrzeug `KEIN FZG`; ein Druck zeigt dann das Warnsymbol.
 
 | | |
 | --- | --- |
 | ![offline](docs/screenshots/1-offline.png) Spiel geschlossen | ![alles aus](docs/screenshots/2-verbunden-alles-aus.png) verbunden, alles aus |
 | ![Fahrzeug an](docs/screenshots/3-fahrzeug-an.png) Motor läuft | ![Blaulicht](docs/screenshots/4-blaulicht-an.png) Blaulicht an, Sirene aus |
-| ![Einsatzfahrt](docs/screenshots/5-einsatzfahrt.png) Blaulicht + Sirene, Licht, 86 km/h | ![Warnblinker](docs/screenshots/6-warnblinker-im-spiel-geschaltet.png) Warnblinker **im Spiel** eingeschaltet |
+| ![Einsatzfahrt](docs/screenshots/5-einsatzfahrt.png) Blaulicht + Sirene, Licht, Gang D, 86 km/h | ![im Spiel geschaltet](docs/screenshots/6-im-spiel-geschaltet-r-und-warnblinker.png) Gang R und Warnblinker **im Spiel** geschaltet |
 
 Die Screenshots stammen aus dem mitgelieferten Simulator (siehe unten), nicht aus dem echten Spiel.
 
@@ -69,10 +74,10 @@ getestet** – beides stand bei der Entwicklung nicht zur Verfügung. Getestet i
 
 - das gebaute Plugin gegen eine nachgebaute Stream-Deck-App (gleiches WebSocket-Protokoll),
 - der unveränderte Lua-Code der Mod in einer Lua-VM mit nachgebauter BeamNG-Umgebung und simuliertem Fahrzeug,
-- beides zusammen über echtes UDP (`npm test`, 11 End-to-End-Tests), Lua kompiliert unter LuaJIT (wie in BeamNG),
+- beides zusammen über echtes UDP (`npm test`, 13 End-to-End-Tests), Lua kompiliert unter LuaJIT (wie in BeamNG),
 - das Manifest mit dem offiziellen Elgato-Validator.
 
-Die BeamNG-Funktionen (`electrics.set_lightbar_signal`, `electrics.setIgnitionLevel`, …) sind nach bestem
+Die BeamNG-Funktionen (`electrics.set_lightbar_signal`, `electrics.setIgnitionLevel`, `shiftToGearIndex`, …) sind nach bestem
 Wissen gewählt und mit Ausweichwegen abgesichert. Falls im Spiel etwas nicht reagiert: Konsole mit `~` öffnen
 und nach `streamdeckBridge` / `streamdeckAgent` suchen.
 

@@ -126,6 +126,12 @@ export const actions = {
 		},
 	},
 
+	gear_p: gearKey("P", (g) => g.startsWith("P")),
+	gear_r: gearKey("R", (g) => g.startsWith("R")),
+	gear_n: gearKey("N", (g) => g.startsWith("N")),
+	// manual gearboxes report numbers, sport/manual modes of automatics S1, M1, ...
+	gear_d: gearKey("D", (g) => /^[DSM1-9]/.test(g)),
+
 	info: {
 		view(s, t, _phase, settings) {
 			const mph = settings.unit === "mph";
@@ -140,6 +146,17 @@ export const actions = {
 		},
 	},
 };
+
+/** One key per gear position; the engaged one lights up green. */
+function gearKey(letter, isActive) {
+	return {
+		down: (bridge) => bridge.send(`gear_${letter.toLowerCase()}`, "set"),
+		view(s, t) {
+			const active = isActive(String(s.gear ?? ""));
+			return { letter, color: active ? C.green : undefined, label: t.gear, status: active ? t.on : t.off };
+		},
+	};
+}
 
 export const texts = {
 	de: {
@@ -219,6 +236,7 @@ export function describe(id, bridge, { lang = "de", phase = 0, settings = {} } =
 		return {
 			icon: idle.icon,
 			neon: idle.neon,
+			letter: idle.letter,
 			big: idle.big ? "–" : undefined,
 			unit: idle.unit,
 			label: idle.quiet ? t.gear + " –" : idle.label,

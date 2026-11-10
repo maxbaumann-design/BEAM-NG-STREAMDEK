@@ -9,7 +9,7 @@ const PORT = 44561;
 const game = new FakeGame({ port: PORT });
 const deck = new FakeDeck({ globalSettings: { host: "127.0.0.1", port: String(PORT) } });
 
-const LAYOUT = ["power", "lightbar", "siren", "emergency", "horn", "lights", "highbeam", "fog", "signal-l", "hazard", "signal-r", "parkingbrake", ["info", { unit: "kmh" }]];
+const LAYOUT = ["power", "lightbar", "siren", "emergency", "horn", "lights", "highbeam", "fog", "signal-l", "hazard", "signal-r", "parkingbrake", ["info", { unit: "kmh" }], "gear-p", "gear-r", "gear-n", "gear-d"];
 
 async function until(check, what, timeout = 4000) {
 	const end = Date.now() + timeout;
@@ -143,9 +143,34 @@ test("lights, high beam, fog, signals, hazards, parking brake, horn", async () =
 test("info key shows speed and gear", async () => {
 	tap("power");
 	await until(() => e().engineRunning === 1, "engine running");
-	game.runInVehicle("mockSet('gear', 'D') mockSet('targetSpeed', 20)");
+	tap("gear-d");
+	game.runInVehicle("mockSet('targetSpeed', 20)");
 	await until(() => shows("info", "72") && shows("info", "GANG D"), "72 km/h in D");
-	game.runInVehicle("mockSet('targetSpeed', 0) mockSet('gear', 'P')");
+	game.runInVehicle("mockSet('targetSpeed', 0)");
+	tap("gear-p");
+	await until(() => e().gear === "P", "back in park");
+});
+
+test("gear keys P R N D select the gear and only the engaged one is lit", async () => {
+	const lit = () => ["p", "r", "n", "d"].filter((g) => shows(`gear-${g}`, "AN")).join("");
+	await until(() => lit() === "p", "P lit initially");
+	for (const g of ["r", "n", "d", "p"]) {
+		tap(`gear-${g}`);
+		await until(() => e().gear === g.toUpperCase() && lit() === g, `gear ${g}`);
+	}
+	game.runInVehicle("controller.mainController.shiftToGearIndex(-1)");
+	await until(() => lit() === "r", "R key follows a shift made in the game");
+	tap("gear-p");
+	await until(() => lit() === "p", "P again");
+});
+
+test("gear keys on a manual gearbox: D is first gear, P is neutral plus parking brake", async () => {
+	game.runInVehicle("mockSet('manual', true) mockSet('gear', 0) mockSet('parkingbrake', 0)");
+	tap("gear-d");
+	await until(() => e().gear === 1 && shows("gear-d", "AN"), "first gear", 6000);
+	tap("gear-p");
+	await until(() => e().gear === "N" && e().parkingbrake === 1 && shows("gear-n", "AN"), "neutral + parking brake", 6000);
+	game.runInVehicle("mockSet('manual', false) mockSet('gear', 'P')");
 });
 
 test("leaving the vehicle and switching to an electric car", async () => {

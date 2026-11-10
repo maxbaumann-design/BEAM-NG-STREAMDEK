@@ -233,6 +233,74 @@
 			]
 		},
 		{
+			"Name": "Gang P (Parken)",
+			"UUID": "com.maxbaumann.beamng.gear-p",
+			"Icon": "imgs/actions/gear_p",
+			"Tooltip": "Legt die Parkstellung ein. Leuchtet grün, wenn P eingelegt ist.",
+			"Controllers": [
+				"Keypad"
+			],
+			"PropertyInspectorPath": "ui/connection.html",
+			"UserTitleEnabled": false,
+			"States": [
+				{
+					"Image": "imgs/actions/gear_p-key",
+					"ShowTitle": false
+				}
+			]
+		},
+		{
+			"Name": "Gang R (Rückwärts)",
+			"UUID": "com.maxbaumann.beamng.gear-r",
+			"Icon": "imgs/actions/gear_r",
+			"Tooltip": "Legt den Rückwärtsgang ein. Leuchtet grün, wenn R eingelegt ist.",
+			"Controllers": [
+				"Keypad"
+			],
+			"PropertyInspectorPath": "ui/connection.html",
+			"UserTitleEnabled": false,
+			"States": [
+				{
+					"Image": "imgs/actions/gear_r-key",
+					"ShowTitle": false
+				}
+			]
+		},
+		{
+			"Name": "Gang N (Leerlauf)",
+			"UUID": "com.maxbaumann.beamng.gear-n",
+			"Icon": "imgs/actions/gear_n",
+			"Tooltip": "Legt den Leerlauf ein. Leuchtet grün, wenn N eingelegt ist.",
+			"Controllers": [
+				"Keypad"
+			],
+			"PropertyInspectorPath": "ui/connection.html",
+			"UserTitleEnabled": false,
+			"States": [
+				{
+					"Image": "imgs/actions/gear_n-key",
+					"ShowTitle": false
+				}
+			]
+		},
+		{
+			"Name": "Gang D (Fahren)",
+			"UUID": "com.maxbaumann.beamng.gear-d",
+			"Icon": "imgs/actions/gear_d",
+			"Tooltip": "Legt die Fahrstufe ein. Leuchtet grün, wenn D eingelegt ist.",
+			"Controllers": [
+				"Keypad"
+			],
+			"PropertyInspectorPath": "ui/connection.html",
+			"UserTitleEnabled": false,
+			"States": [
+				{
+					"Image": "imgs/actions/gear_d-key",
+					"ShowTitle": false
+				}
+			]
+		},
+		{
 			"Name": "Tempo & Gang",
 			"UUID": "com.maxbaumann.beamng.info",
 			"Icon": "imgs/actions/info",

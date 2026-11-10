@@ -11,7 +11,7 @@
 local M = {}
 
 local PROTOCOL = 1
-local AGENT_VERSION = 1
+local AGENT_VERSION = 2
 local logTag = 'streamdeckBridge'
 
 local config = { address = '127.0.0.1', port = 4455, rate = 15 }
@@ -231,6 +231,58 @@ function commands.parkingbrake(action)
   end
 end
 
+-- Gear selection (P/R/N/D). Automatic gearboxes use the shifter slots
+-- R = -1, N = 0, P = 1, D = 2; the result is checked against the gear the
+-- vehicle reports, so other gearboxes fall back gracefully.
+local gearSlots = { R = { -1 }, N = { 0 }, P = { 1 }, D = { 2, 1 } }
+local gearRequest = nil
+
+local function gearMatches(target)
+  local g = tostring(electrics.values.gear or '')
+  if target == 'D' then return g:match('^[DSM]') ~= nil or (tonumber(g) or 0) > 0 end
+  return g:sub(1, 1) == target
+end
+
+local function shiftTo(index)
+  local mc = mainController()
+  if mc and mc.shiftToGearIndex then try(mc.shiftToGearIndex, index) end
+end
+
+local function requestGear(target)
+  if gearMatches(target) then return end
+  gearRequest = { target = target, i = 1, checkAt = now + 0.5 }
+  shiftTo(gearSlots[target][1])
+end
+
+local function updateGearRequest()
+  local r = gearRequest
+  if not r or now < r.checkAt then return end
+  if gearMatches(r.target) then
+    gearRequest = nil
+    -- manual gearbox: "D" means first gear
+    if r.target == 'D' and (tonumber(electrics.values.gear) or 0) > 1 then shiftTo(1) end
+    return
+  end
+  local slots = gearSlots[r.target]
+  if r.i < #slots then
+    r.i = r.i + 1
+    r.checkAt = now + 0.5
+    shiftTo(slots[r.i])
+    return
+  end
+  gearRequest = nil
+  -- no park position (manual gearbox): neutral plus parking brake instead
+  if r.target == 'P' then
+    shiftTo(0)
+    commands.parkingbrake('on')
+  end
+end
+
+function commands.gear_p() requestGear('P') end
+function commands.gear_r() requestGear('R') end
+function commands.gear_n() requestGear('N') end
+function commands.gear_d() requestGear('D') end
+
 local function round(x, step) return math.floor(x / step + 0.5) * step end
 
 local function lit(v)
@@ -253,6 +305,7 @@ function A.report(t)
     setStarter(false)
     starterUntil = nil
   end
+  updateGearRequest()
 
   local state = {
     ign = ignitionLevel(),
