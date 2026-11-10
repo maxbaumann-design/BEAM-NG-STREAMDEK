@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="de">
+	<head>
+		<meta charset="utf-8" />
+		<title>BeamNG Bridge – Simulator</title>
+		<style>
+			* { box-sizing: border-box; }
+			body {
+				margin: 0; min-height: 100vh; padding: 24px 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px;
+				background: #0e1014; color: #d7dbe2; font: 14px/1.45 "Segoe UI", system-ui, Arial, sans-serif;
+			}
+			header { text-align: center; }
+			h1 { margin: 0 0 4px; font-size: 20px; }
+			header p { margin: 0; color: #8a919d; }
+			main { display: flex; gap: 28px; align-items: flex-start; }
+			.deck { background: #05060a; border-radius: 26px; padding: 26px 26px 18px; border: 1px solid #23262d; box-shadow: 0 18px 50px #000a; }
+			.grid { display: grid; gap: 16px; }
+			.key {
+				width: 104px; height: 104px; border-radius: 14px; border: 2px solid #000; padding: 0; overflow: hidden; position: relative;
+				background: #101216; cursor: pointer; box-shadow: 0 0 0 1px #2a2d35;
+			}
+			.key:active { transform: scale(0.96); }
+			.key img { width: 100%; height: 100%; display: block; pointer-events: none; }
+			.key.alert::after {
+				content: "⚠"; position: absolute; inset: 0; display: grid; place-items: center; font-size: 54px; color: #ffcc00; background: #000c;
+			}
+			.brand { text-align: center; color: #5d636e; font-size: 11px; letter-spacing: 3px; margin-top: 14px; }
+			.game { width: 330px; background: #171a20; border: 1px solid #23262d; border-radius: 16px; padding: 18px 20px; }
+			.game h2 { margin: 0 0 2px; font-size: 15px; }
+			.game small { color: #8a919d; }
+			table { width: 100%; border-collapse: collapse; margin: 12px 0 14px; }
+			td { padding: 3px 0; border-bottom: 1px solid #23262d; }
+			td:last-child { text-align: right; font-weight: 600; }
+			.on { color: #4cd08a; }
+			.warn { color: #ffb020; }
+			.off { color: #8a919d; }
+			.buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+			.buttons button {
+				background: #252932; color: #d7dbe2; border: 1px solid #333844; border-radius: 8px; padding: 7px 6px; font: inherit; font-size: 12.5px; cursor: pointer;
+			}
+			.buttons button:hover { background: #2e3340; }
+			.buttons .wide { grid-column: span 2; }
+		</style>
+	</head>
+	<body>
+		<header>
+			<h1>BeamNG Bridge – Simulator</h1>
+			<p>Echtes Stream-Deck-Plugin + echter Mod-Code, Stream-Deck-App und Fahrzeug sind simuliert.</p>
+		</header>
+		<main>
+			<section class="deck">
+				<div class="grid" id="grid"></div>
+				<div class="brand">STREAM DECK (SIMULIERT)</div>
+			</section>
+			<section class="game">
+				<h2>BeamNG.drive (simuliert)</h2>
+				<small id="gameStatus"></small>
+				<table id="values"></table>
+				<div class="buttons">
+					<button data-do="lightbar">Im Spiel: Blaulicht</button>
+					<button data-do="hazard">Im Spiel: Warnblinker</button>
+					<button data-do="lights">Im Spiel: Licht</button>
+					<button data-do="reverse">Im Spiel: Gang R</button>
+					<button data-do="drive">Gas geben (86 km/h)</button>
+					<button data-do="park">Anhalten</button>
+					<button data-do="leave">Fahrzeug entfernen</button>
+					<button data-do="enter">Fahrzeug spawnen</button>
+					<button data-do="stop">Spiel beenden</button>
+					<button data-do="start">Spiel starten</button>
+				</div>
+			</section>
+		</main>
+		<script>
+			const grid = document.getElementById("grid");
+			const keys = new Map();
+			const post = (url) => fetch(url, { method: "POST" });
+
+			const events = new EventSource("/events");
+			events.addEventListener("init", (ev) => {
+				const { columns, rows, keys: placed } = JSON.parse(ev.data);
+				grid.style.gridTemplateColumns = `repeat(${columns}, 104px)`;
+				grid.replaceChildren();
+				for (let i = 0; i < columns * rows; i++) {
+					const key = placed.find((k) => k.row * columns + k.column === i);
+					const button = document.createElement("button");
+					button.className = "key";
+					if (key) {
+						const img = document.createElement("img");
+						if (key.image) img.src = key.image;
+						button.append(img);
+						button.onpointerdown = () => post(`/key?context=${key.context}&down=1`);
+						button.onpointerup = button.onpointerleave = () => post(`/key?context=${key.context}&down=0`);
+						keys.set(key.context, button);
+					}
+					grid.append(button);
+				}
+			});
+			events.addEventListener("image", (ev) => {
+				const { context, image } = JSON.parse(ev.data);
+				const img = keys.get(context)?.firstChild;
+				if (img) img.src = image;
+			});
+			events.addEventListener("alert", (ev) => {
+				const button = keys.get(JSON.parse(ev.data).context);
+				button?.classList.add("alert");
+				setTimeout(() => button?.classList.remove("alert"), 900);
+			});
+
+			const row = (name, text, cls) => `<tr><td>${name}</td><td class="${cls}">${text}</td></tr>`;
+			const flag = (name, value, text = "an") => row(name, value ? text : "aus", value ? "on" : "off");
+			events.addEventListener("game", (ev) => {
+				const { running, vehicle, electrics: e } = JSON.parse(ev.data);
+				document.getElementById("gameStatus").textContent = !running
+					? "Spiel ist geschlossen"
+					: vehicle ? "Spiel läuft – Fahrzeug: fullsize (Polizei)" : "Spiel läuft – kein Fahrzeug";
+				document.getElementById("values").innerHTML = !e
+					? row("Fahrzeugdaten", "–", "off")
+					: row("Zündung (ignitionLevel)", e.ignitionLevel, e.ignitionLevel ? "warn" : "off") +
+						flag("Motor (engineRunning)", e.engineRunning, "läuft") +
+						row("Blaulicht (lightbar)", ["0 · aus", "1 · Licht", "2 · Licht + Sirene"][e.lightbar], e.lightbar ? "on" : "off") +
+						row("Licht (lights_state)", ["0 · aus", "1 · Abblendlicht", "2 · Fernlicht"][e.lights_state], e.lights_state ? "on" : "off") +
+						flag("Nebelscheinwerfer", e.fog) +
+						flag("Warnblinker", e.hazard_enabled) +
+						row("Blinker", e.signal_left_input ? "links" : e.signal_right_input ? "rechts" : "aus", e.signal_left_input || e.signal_right_input ? "on" : "off") +
+						flag("Hupe", e.horn) +
+						flag("Handbremse", e.parkingbrake > 0.5, "angezogen") +
+						row("Tempo / Gang", `${Math.round(e.wheelspeed * 3.6)} km/h · ${e.gear}`, "");
+			});
+
+			for (const button of document.querySelectorAll("[data-do]")) button.onclick = () => post(`/game?do=${button.dataset.do}`);
+		</script>
+	</body>
+</html>
