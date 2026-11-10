@@ -1,0 +1,23 @@
+{
+	"name": "beamng-streamdeck-plugin",
+	"version": "1.0.0",
+	"description": "Stream Deck plugin for BeamNG.drive",
+	"scripts": {
+		"build": "node scripts/manifest.mjs && rollup -c && streamdeck validate com.maxbaumann.beamng.sdPlugin",
+		"pack": "npm run build && node scripts/pack.mjs",
+		"sim": "node simulator/server.mjs",
+		"test": "node --test simulator/test.mjs"
+	},
+	"license": "MIT",
+	"devDependencies": {
+		"@elgato/cli": "^1.10.4",
+		"@elgato/streamdeck": "^3.0.4",
+		"@rollup/plugin-commonjs": "^29.0.3",
+		"@rollup/plugin-node-resolve": "^16.0.3",
+		"rollup": "^4.68.2",
+		"wasmoon": "^1.16.0",
+		"ws": "^8.22.2"
+	},
+	"private": true,
+	"type": "module"
+}

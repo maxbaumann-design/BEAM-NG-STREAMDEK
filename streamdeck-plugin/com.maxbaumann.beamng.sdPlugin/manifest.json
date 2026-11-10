@@ -1,0 +1,253 @@
+{
+	"$schema": "https://schemas.elgato.com/streamdeck/plugins/manifest.json",
+	"Name": "BeamNG Bridge",
+	"Version": "1.0.0.0",
+	"Author": "Max Baumann",
+	"Description": "Steuert Fahrzeugfunktionen in BeamNG.drive: Fahrzeug ein/aus, Blaulicht, Sirene, Licht, Blinker und mehr. Die Tasten zeigen live an, was im Spiel aktiv ist.",
+	"UUID": "com.maxbaumann.beamng",
+	"Icon": "imgs/plugin",
+	"Category": "BeamNG Bridge",
+	"CategoryIcon": "imgs/category",
+	"CodePath": "bin/plugin.js",
+	"SDKVersion": 2,
+	"Software": {
+		"MinimumVersion": "6.5"
+	},
+	"OS": [
+		{
+			"Platform": "windows",
+			"MinimumVersion": "10"
+		},
+		{
+			"Platform": "mac",
+			"MinimumVersion": "12"
+		}
+	],
+	"Nodejs": {
+		"Version": "20",
+		"Debug": "disabled"
+	},
+	"Actions": [
+		{
+			"Name": "Fahrzeug Ein/Aus",
+			"UUID": "com.maxbaumann.beamng.power",
+			"Icon": "imgs/actions/power",
+			"Tooltip": "Startet den Motor bzw. schaltet das Fahrzeug aus. Zeigt Aus / Zündung / Läuft.",
+			"Controllers": [
+				"Keypad"
+			],
+			"PropertyInspectorPath": "ui/power.html",
+			"UserTitleEnabled": false,
+			"States": [
+				{
+					"Image": "imgs/actions/power-key",
+					"ShowTitle": false
+				}
+			]
+		},
+		{
+			"Name": "Blaulicht",
+			"UUID": "com.maxbaumann.beamng.lightbar",
+			"Icon": "imgs/actions/lightbar",
+			"Tooltip": "Schaltet das Blaulicht ein oder aus (ohne Sirene).",
+			"Controllers": [
+				"Keypad"
+			],
+			"PropertyInspectorPath": "ui/connection.html",
+			"UserTitleEnabled": false,
+			"States": [
+				{
+					"Image": "imgs/actions/lightbar-key",
+					"ShowTitle": false
+				}
+			]
+		},
+		{
+			"Name": "Sirene",
+			"UUID": "com.maxbaumann.beamng.siren",
+			"Icon": "imgs/actions/siren",
+			"Tooltip": "Schaltet die Sirene zu oder ab. Das Blaulicht wird bei Bedarf mit eingeschaltet.",
+			"Controllers": [
+				"Keypad"
+			],
+			"PropertyInspectorPath": "ui/connection.html",
+			"UserTitleEnabled": false,
+			"States": [
+				{
+					"Image": "imgs/actions/siren-key",
+					"ShowTitle": false
+				}
+			]
+		},
+		{
+			"Name": "Einsatz (Blaulicht + Sirene)",
+			"UUID": "com.maxbaumann.beamng.emergency",
+			"Icon": "imgs/actions/emergency",
+			"Tooltip": "Schaltet durch: Aus → Blaulicht → Blaulicht mit Sirene → Aus.",
+			"Controllers": [
+				"Keypad"
+			],
+			"PropertyInspectorPath": "ui/connection.html",
+			"UserTitleEnabled": false,
+			"States": [
+				{
+					"Image": "imgs/actions/emergency-key",
+					"ShowTitle": false
+				}
+			]
+		},
+		{
+			"Name": "Hupe",
+			"UUID": "com.maxbaumann.beamng.horn",
+			"Icon": "imgs/actions/horn",
+			"Tooltip": "Hupt, solange die Taste gedrückt ist.",
+			"Controllers": [
+				"Keypad"
+			],
+			"PropertyInspectorPath": "ui/connection.html",
+			"UserTitleEnabled": false,
+			"States": [
+				{
+					"Image": "imgs/actions/horn-key",
+					"ShowTitle": false
+				}
+			]
+		},
+		{
+			"Name": "Licht",
+			"UUID": "com.maxbaumann.beamng.lights",
+			"Icon": "imgs/actions/lights",
+			"Tooltip": "Schaltet durch: Aus → Abblendlicht → Fernlicht.",
+			"Controllers": [
+				"Keypad"
+			],
+			"PropertyInspectorPath": "ui/connection.html",
+			"UserTitleEnabled": false,
+			"States": [
+				{
+					"Image": "imgs/actions/lights-key",
+					"ShowTitle": false
+				}
+			]
+		},
+		{
+			"Name": "Fernlicht",
+			"UUID": "com.maxbaumann.beamng.highbeam",
+			"Icon": "imgs/actions/highbeam",
+			"Tooltip": "Schaltet das Fernlicht ein oder aus.",
+			"Controllers": [
+				"Keypad"
+			],
+			"PropertyInspectorPath": "ui/connection.html",
+			"UserTitleEnabled": false,
+			"States": [
+				{
+					"Image": "imgs/actions/highbeam-key",
+					"ShowTitle": false
+				}
+			]
+		},
+		{
+			"Name": "Nebelscheinwerfer",
+			"UUID": "com.maxbaumann.beamng.fog",
+			"Icon": "imgs/actions/fog",
+			"Tooltip": "Schaltet die Nebelscheinwerfer ein oder aus.",
+			"Controllers": [
+				"Keypad"
+			],
+			"PropertyInspectorPath": "ui/connection.html",
+			"UserTitleEnabled": false,
+			"States": [
+				{
+					"Image": "imgs/actions/fog-key",
+					"ShowTitle": false
+				}
+			]
+		},
+		{
+			"Name": "Warnblinker",
+			"UUID": "com.maxbaumann.beamng.hazard",
+			"Icon": "imgs/actions/hazard",
+			"Tooltip": "Schaltet den Warnblinker ein oder aus und blinkt im Takt des Fahrzeugs.",
+			"Controllers": [
+				"Keypad"
+			],
+			"PropertyInspectorPath": "ui/connection.html",
+			"UserTitleEnabled": false,
+			"States": [
+				{
+					"Image": "imgs/actions/hazard-key",
+					"ShowTitle": false
+				}
+			]
+		},
+		{
+			"Name": "Blinker links",
+			"UUID": "com.maxbaumann.beamng.signal-l",
+			"Icon": "imgs/actions/signal_l",
+			"Tooltip": "Schaltet den linken Blinker ein oder aus.",
+			"Controllers": [
+				"Keypad"
+			],
+			"PropertyInspectorPath": "ui/connection.html",
+			"UserTitleEnabled": false,
+			"States": [
+				{
+					"Image": "imgs/actions/signal_l-key",
+					"ShowTitle": false
+				}
+			]
+		},
+		{
+			"Name": "Blinker rechts",
+			"UUID": "com.maxbaumann.beamng.signal-r",
+			"Icon": "imgs/actions/signal_r",
+			"Tooltip": "Schaltet den rechten Blinker ein oder aus.",
+			"Controllers": [
+				"Keypad"
+			],
+			"PropertyInspectorPath": "ui/connection.html",
+			"UserTitleEnabled": false,
+			"States": [
+				{
+					"Image": "imgs/actions/signal_r-key",
+					"ShowTitle": false
+				}
+			]
+		},
+		{
+			"Name": "Handbremse",
+			"UUID": "com.maxbaumann.beamng.parkingbrake",
+			"Icon": "imgs/actions/parkingbrake",
+			"Tooltip": "Zieht oder löst die Handbremse.",
+			"Controllers": [
+				"Keypad"
+			],
+			"PropertyInspectorPath": "ui/connection.html",
+			"UserTitleEnabled": false,
+			"States": [
+				{
+					"Image": "imgs/actions/parkingbrake-key",
+					"ShowTitle": false
+				}
+			]
+		},
+		{
+			"Name": "Tempo & Gang",
+			"UUID": "com.maxbaumann.beamng.info",
+			"Icon": "imgs/actions/info",
+			"Tooltip": "Zeigt Geschwindigkeit und eingelegten Gang.",
+			"Controllers": [
+				"Keypad"
+			],
+			"PropertyInspectorPath": "ui/info.html",
+			"UserTitleEnabled": false,
+			"States": [
+				{
+					"Image": "imgs/actions/info-key",
+					"ShowTitle": false
+				}
+			]
+		}
+	]
+}

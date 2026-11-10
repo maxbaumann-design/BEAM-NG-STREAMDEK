@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="de">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="stylesheet" href="pi.css" />
+		<script src="pi.js"></script>
+	</head>
+	<body>
+		<label
+			><span>Einschalten</span
+			><select data-setting="mode" data-default="engine">
+				<option value="engine">Motor starten</option>
+				<option value="ignition">Nur Zündung</option>
+			</select></label
+		>
+		<label><span>BeamNG Host</span><input data-global="host" placeholder="127.0.0.1" /></label>
+		<label><span>Port</span><input data-global="port" placeholder="4455" inputmode="numeric" /></label>
+		<p>Host und Port gelten für alle BeamNG-Tasten.</p>
+	</body>
+</html>
